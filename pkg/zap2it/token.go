@@ -40,5 +40,5 @@ func GetTokenResponse(username, password string) (TokenResponse, error) {
 		return TokenResponse{}, ErrInternalServerError
 	}
 
-	return tokenResponse, fmt.Errorf("could not get token response: %w", err)
+	return tokenResponse, nil
 }
