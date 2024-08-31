@@ -9,14 +9,16 @@ import (
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
+var ErrNoProvidersFound = errors.New("no providers found")
+
 func FetchTable() (string, error) {
 	providersResponse, err := zap2it.GetProvidersResponse(config.GetCountryCode(), config.GetZipCode(), config.GetLanguage())
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("could not get provider response: %w", err)
 	}
 
 	if len(providersResponse.Providers) == 0 {
-		return "", errors.New("no providers found")
+		return "", ErrNoProvidersFound
 	}
 
 	message := fmt.Sprintf("Found %d provider(s):\n", len(providersResponse.Providers))

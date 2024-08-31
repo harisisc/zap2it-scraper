@@ -26,21 +26,26 @@ func main() {
 	guideCache := cache.New()
 	go guideCache.Start()
 
-	http.HandleFunc("/xmltv", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/xmltv", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Disposition", "attachment; filename=\"guide.xmltv\"")
 		w.Header().Set("Content-Type", "application/xml; charset=utf-8")
 
 		output, err := guideCache.GetTVGuide().Render()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+
 			return
 		}
 
-		io.WriteString(w, output)
+		_, err = io.WriteString(w, output)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	})
 
 	serverPort := fmt.Sprintf(":%d", config.GetServerPort())
 	fmt.Printf("Starting server on port %s\n", serverPort)
+
 	err := http.ListenAndServe(serverPort, nil)
 	if errors.Is(err, http.ErrServerClosed) {
 		panic("server closed")

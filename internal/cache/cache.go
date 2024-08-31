@@ -9,6 +9,10 @@ import (
 	"github.com/carldanley/zap2it-scraper/pkg/zap2it"
 )
 
+const (
+	CacheExpirationHours = 3
+)
+
 type Cache struct {
 	lastFetchTime time.Time
 	tvGuide       *xmltv.TVGuide
@@ -21,7 +25,7 @@ func New() *Cache {
 }
 
 func (c *Cache) IsStale() bool {
-	return time.Since(c.lastFetchTime).Hours() > 3
+	return time.Since(c.lastFetchTime).Hours() > CacheExpirationHours
 }
 
 func (c *Cache) Start() {
@@ -30,6 +34,7 @@ func (c *Cache) Start() {
 	for {
 		if c.IsStale() {
 			fmt.Println("Cache is stale!")
+
 			if err := c.Update(); err != nil {
 				fmt.Printf("error updating cache: %s\n", err)
 			}
@@ -41,6 +46,7 @@ func (c *Cache) Start() {
 
 func (c *Cache) Update() error {
 	fmt.Println("Updating cache...")
+
 	tvGuide := xmltv.CreateTVGuide(config.GetLanguage())
 
 	// calculate the current half hour offset time from 6 hours ago
@@ -61,6 +67,7 @@ func (c *Cache) Update() error {
 	for currentTimestamp < endTimeStamp {
 		// fetch the guide data for the current timestamp
 		fmt.Println("Fetching guide data for timestamp:", currentTimestamp)
+
 		guideResponse, err := c.fetchGuideData(tokenResponse.Token, currentTimestamp)
 		if err != nil {
 			return fmt.Errorf("error fetching guide data: %w", err)
@@ -76,12 +83,13 @@ func (c *Cache) Update() error {
 		}
 
 		// add 3 hours to the current timestamp
-		currentTimestamp += 10800
+		currentTimestamp += (60 * 60 * 3)
 	}
 
 	// if we got this far, it means we fetched all of the content we need
 	// so, update the cache
 	fmt.Println("Cache updated!")
+
 	c.tvGuide = tvGuide
 	c.lastFetchTime = time.Now()
 
@@ -99,7 +107,12 @@ func (c *Cache) fetchGuideData(token string, unixTimestamp int64) (zap2it.GuideR
 		UnixTimestamp: unixTimestamp,
 	}
 
-	return zap2it.GetGuideResponse(request)
+	response, err := zap2it.GetGuideResponse(request)
+	if err != nil {
+		return zap2it.GuideResponse{}, fmt.Errorf("could not get guide response: %w", err)
+	}
+
+	return response, nil
 }
 
 func (c *Cache) GetTVGuide() *xmltv.TVGuide {

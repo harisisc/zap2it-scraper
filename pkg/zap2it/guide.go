@@ -1,7 +1,6 @@
 package zap2it
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 
@@ -100,12 +99,12 @@ func GetGuideResponse(request GuideRequest) (GuideResponse, error) {
 		SetResult(&guideResponse).
 		Get(URLGuideEndpoint)
 	if err != nil {
-		return GuideResponse{}, err
+		return GuideResponse{}, fmt.Errorf("could not get guide response: %w", err)
 	}
 
 	switch resp.StatusCode() {
 	case http.StatusBadRequest:
-		return GuideResponse{}, errors.New(ErrBadRequest)
+		return GuideResponse{}, ErrBadRequest
 	}
 
 	return guideResponse, nil

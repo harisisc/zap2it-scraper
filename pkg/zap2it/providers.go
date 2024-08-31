@@ -1,7 +1,6 @@
 package zap2it
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -51,12 +50,12 @@ func GetProvidersResponse(countryCode, zipCode, language string) (ListingProvide
 		SetResult(&listingProvidersResponse).
 		Get(url)
 	if err != nil {
-		return ListingProvidersResponse{}, err
+		return ListingProvidersResponse{}, fmt.Errorf("could not get listing providers: %w", err)
 	}
 
 	switch resp.StatusCode() {
 	case http.StatusInternalServerError:
-		return ListingProvidersResponse{}, errors.New(ErrInternalServerError)
+		return ListingProvidersResponse{}, ErrInternalServerError
 	}
 
 	return listingProvidersResponse, nil

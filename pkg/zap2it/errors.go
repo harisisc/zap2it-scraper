@@ -1,7 +1,9 @@
 package zap2it
 
-const (
-	ErrBadRequest          = "bad request"
-	ErrInternalServerError = "internal server error"
-	ErrInvalidCredentials  = "invalid credentials"
+import "errors"
+
+var (
+	ErrBadRequest          = errors.New("bad request")
+	ErrInternalServerError = errors.New("internal server error")
+	ErrInvalidCredentials  = errors.New("invalid credentials")
 )

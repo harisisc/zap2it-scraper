@@ -5,6 +5,11 @@ import (
 	"strconv"
 )
 
+const (
+	DefaultServerPort  = 8080
+	DefaultDaysToFetch = 4
+)
+
 func GetUsername() string {
 	return os.Getenv("ZAP2IT_USERNAME")
 }
@@ -16,16 +21,16 @@ func GetPassword() string {
 func GetServerPort() int {
 	port, exists := os.LookupEnv("ZAP2IT_SERVER_PORT")
 	if !exists {
-		return 8080
+		return DefaultServerPort
 	}
 
 	number, err := strconv.Atoi(port)
 	if err != nil {
-		return 8080
+		return DefaultServerPort
 	}
 
 	if number == 0 {
-		return 8080
+		return DefaultServerPort
 	}
 
 	return number
@@ -83,16 +88,16 @@ func GetLanguage() string {
 func GetDaysToFetch() int64 {
 	days, exists := os.LookupEnv("ZAP2IT_DAYS_TO_FETCH")
 	if !exists {
-		return 4
+		return DefaultDaysToFetch
 	}
 
 	number, err := strconv.Atoi(days)
 	if err != nil {
-		return 4
+		return DefaultDaysToFetch
 	}
 
 	if number == 0 {
-		return 4
+		return DefaultDaysToFetch
 	}
 
 	return int64(number)

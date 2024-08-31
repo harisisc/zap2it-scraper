@@ -1,7 +1,7 @@
 package zap2it
 
 import (
-	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/go-resty/resty/v2"
@@ -30,15 +30,15 @@ func GetTokenResponse(username, password string) (TokenResponse, error) {
 		SetResult(&tokenResponse).
 		Post(URLTokenEndpoint)
 	if err != nil {
-		return TokenResponse{}, err
+		return TokenResponse{}, fmt.Errorf("could not get token response: %w", err)
 	}
 
 	switch resp.StatusCode() {
 	case http.StatusForbidden:
-		return TokenResponse{}, errors.New(ErrInvalidCredentials)
+		return TokenResponse{}, ErrInvalidCredentials
 	case http.StatusInternalServerError:
-		return TokenResponse{}, errors.New(ErrInternalServerError)
+		return TokenResponse{}, ErrInternalServerError
 	}
 
-	return tokenResponse, err
+	return tokenResponse, fmt.Errorf("could not get token response: %w", err)
 }

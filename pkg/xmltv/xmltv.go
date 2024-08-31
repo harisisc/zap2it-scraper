@@ -81,7 +81,7 @@ func (tvg *TVGuide) AddEvent(event zap2it.EventResponse) {
 func (tvg *TVGuide) Render() (string, error) {
 	bytes, err := xml.MarshalIndent(tvg, "", "    ")
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("could not marshal xml: %w", err)
 	}
 
 	header := "<?xml version=\"1.0\"?>\n"

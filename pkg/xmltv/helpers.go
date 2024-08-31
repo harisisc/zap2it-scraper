@@ -8,10 +8,13 @@ import (
 	"github.com/carldanley/zap2it-scraper/pkg/zap2it"
 )
 
+const (
+	ProgramIDSuffixLength = 4
+)
+
 func (tvg TVGuide) buildXMLDate(time string) string {
 	// given format: 20240901040000 +0000
 	// expected format: 20240901040000 +0000
-
 	time = strings.Replace(time, "-", "", -1)
 	time = strings.Replace(time, "T", "", -1)
 	time = strings.Replace(time, ":", "", -1)
@@ -27,11 +30,12 @@ func (tvg TVGuide) getProgramIDEpisodeNumber(event zap2it.EventResponse) string 
 	programIDLength := len(event.Program.ID)
 	seriesID := strings.ReplaceAll(event.SeriesID, "SH", "EP")
 
-	if programIDLength < 4 {
+	if programIDLength < ProgramIDSuffixLength {
 		return fmt.Sprintf("%s.0000", seriesID)
 	}
 
-	lastFourCharacters := event.Program.ID[programIDLength-4:]
+	lastFourCharacters := event.Program.ID[programIDLength-ProgramIDSuffixLength:]
+
 	return fmt.Sprintf("%s.%s", seriesID, lastFourCharacters)
 }
 
@@ -177,6 +181,7 @@ func (tvg TVGuide) buildProgramRatingElement(event zap2it.EventResponse) *Rating
 
 func (p *Program) processFlags(event zap2it.EventResponse) {
 	isNewShow := false
+
 	for _, flag := range event.Flags {
 		switch strings.ToLower(strings.TrimSpace(flag)) {
 		case "new":
