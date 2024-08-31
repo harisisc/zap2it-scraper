@@ -1,0 +1,48 @@
+kind: pipeline
+type: docker
+name: default
+
+volumes:
+- name: dockersock
+  temp: {}
+
+services:
+- name: docker
+  image: docker:dind
+  privileged: true
+  volumes:
+  - name: dockersock
+    path: /var/run
+
+steps:
+- name: lint
+  image: golang:alpine
+  environment:
+    GOLINTCI_VERSION: v1.60.1
+    CGO_ENABLED: 0
+    GOOS: linux
+  commands:
+  - wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin ${GOLINTCI_VERSION}
+  - golangci-lint --version
+  - golangci-lint run
+
+- name: build-and-publish
+  image: ghcr.io/goreleaser/goreleaser:v1.24.0
+  environment:
+    GITHUB_USERNAME:
+      from_secret: github-username
+    GITHUB_TOKEN:
+      from_secret: github-pat-packages
+  commands:
+  - git fetch --tags
+  - echo $GITHUB_TOKEN | docker login ghcr.io -u $GITHUB_USERNAME --password-stdin
+  - goreleaser --version
+  - goreleaser release --clean -f ./.goreleaser.yml
+  volumes:
+  - name: dockersock
+    path: /var/run
+  when:
+    ref:
+    - refs/tags/*
+  depends_on:
+  - lint
