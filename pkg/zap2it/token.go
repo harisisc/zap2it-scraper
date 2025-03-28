@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	URLTokenEndpoint = "https://tvlistings.zap2it.com/api/user/login"
+	URLTokenEndpoint = "https://tvlistings.gracenote.com/api/user/login"
 )
 
 type TokenResponse struct {
