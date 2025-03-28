@@ -1,16 +1,17 @@
-FROM alpine
+FROM golang:alpine AS builder
 
-LABEL org.opencontainers.image.source https://github.com/carldanley/zap2it-scraper
+WORKDIR /src
+COPY . .
+
+RUN go build -o zap2it-scraper main.go
+
+FROM alpine
 
 RUN apk upgrade --no-cache \
   && apk --no-cache add \
   tzdata zip ca-certificates
 
-WORKDIR /usr/share/zoneinfo
-RUN zip -r -0 /zoneinfo.zip .
-ENV ZONEINFO /zoneinfo.zip
+WORKDIR /zap2it-scraper
+COPY --from=builder /src/zap2it-scraper .
 
-WORKDIR /
-ADD zap2it-scraper /bin/
-
-ENTRYPOINT [ "/bin/zap2it-scraper" ]
+ENTRYPOINT [ "/zap2it-scraper/zap2it-scraper" ]
