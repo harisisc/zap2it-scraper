@@ -18,15 +18,61 @@ After finding a provider you're satisfied with, update the other environment var
 
 ## Environment Variables
 
-| Variable | Description |
-|----------|-------------|
-| `ZAP2IT_USERNAME`  | Your [Zap2IT](https://tvlistings.zap2it.com/) Username |
-| `ZAP2IT_PASSWORD` | Your [Zap2IT](https://tvlistings.zap2it.com/) Password |
-| `ZAP2IT_SERVER_PORT` | The port this server should host the XMLTV guide on; `8080` is the default |
-| `ZAP2IT_COUNTRY_CODE` | The Zap2IT country code; `USA` is the default |
-| `ZAP2IT_LINEUP_ID` | The Zap2IT lineup ID; `DFT` is the default. See the `Fetching Providers` section for more information |
-| `ZAP2IT_HEADEND_ID` | The Zap2IT headend ID; `lineupId` is the default. See the `Fetching Providers` section for more information |
-| `ZAP2IT_DEVICE` | The Zap2IT device ID; `-` is the default. See the `Fetching Providers` section for more information |
-| `ZAP2IT_LANGUAGE` | The Zap2IT language your guide data should use; `en` is the default |
-| `ZAP2IT_DAYS_TO_FETCH` | The number of days of guide data to fetch from Zap2IT; `4` is the default |
-| `ZAP2IT_FETCH_PROVIDERS` | Whether or not to fetch the providers and output them as a table during startup; `false` is the default |
+| Variable | Description | |
+|----------|-------------| --- |
+| `ZAP2IT_USERNAME`  | Your [Zap2IT](https://tvlistings.zap2it.com/) Username | `Optional` |
+| `ZAP2IT_PASSWORD` | Your [Zap2IT](https://tvlistings.zap2it.com/) Password | `Optional` |
+| `ZAP2IT_SERVER_PORT` | The port this server should host the XMLTV guide on | `Required` `Default: 8080` |
+| `ZAP2IT_COUNTRY_CODE` | The Zap2IT country code | `Required` `Default: USA` |
+| `ZAP2IT_ZIP_CODE` | The Zap2IT zip code | `Required` |
+| `ZAP2IT_LINEUP_ID` | The Zap2IT lineup ID. See the `Fetching Providers` section for more information | `Required` `Default DFT` |
+| `ZAP2IT_HEADEND_ID` | The Zap2IT headend ID. See the `Fetching Providers` section for more information | `Required` `Default: lineupId` |
+| `ZAP2IT_DEVICE` | The Zap2IT device ID; `-` is the default. See the `Fetching Providers` section for more information | `Required` `Default: '-'` |
+| `ZAP2IT_LANGUAGE` | The Zap2IT language your guide data should use | `Required` `Default: en` |
+| `ZAP2IT_DAYS_TO_FETCH` | The number of days of guide data to fetch from Zap2IT. | `Required` `Default 4` |
+| `ZAP2IT_FETCH_PROVIDERS` | Whether or not to fetch the providers and output them as a table during startup. | `Required` `Default: false` |
+
+## Docker build/run
+```
+docker build -t zap2it-scraper .
+
+docker run \
+  --name zap2it-scraper2 \
+  -e ZAP2IT_USERNAME="" \
+  -e ZAP2IT_PASSWORD="" \
+  -e ZAP2IT_SERVER_PORT="8080" \
+  -e ZAP2IT_COUNTRY_CODE="USA" \
+  -e ZAP2IT_ZIP_CODE="90210" \
+  -e ZAP2IT_LINEUP_ID="DFT" \
+  -e ZAP2IT_HEADEND_ID="lineupId" \
+  -e ZAP2IT_DEVICE="-" \
+  -e ZAP2IT_LANGUAGE="en" \
+  -e ZAP2IT_DAYS_TO_FETCH="7" \
+  -e ZAP2IT_FETCH_PROVIDERS="false" \
+  -p 8080:8080 \
+  --rm \
+  -d \
+  zap2it-scraper
+```
+
+## Docker Compose Example
+```
+services:
+  zap2it-scraper:
+    container_name: zap2it-scraper
+    build: ./src/zap2it-scraper
+    environment:
+      ZAP2IT_USERNAME: ""
+      ZAP2IT_PASSWORD: ""
+      ZAP2IT_SERVER_PORT: "8080"
+      ZAP2IT_COUNTRY_CODE: "USA"
+      ZAP2IT_ZIP_CODE: "90210"
+      ZAP2IT_LINEUP_ID: "DFT"
+      ZAP2IT_HEADEND_ID: "lineupId"
+      ZAP2IT_DEVICE: "-"
+      ZAP2IT_LANGUAGE: "en"
+      ZAP2IT_DAYS_TO_FETCH: "4"
+      ZAP2IT_FETCH_PROVIDERS: "false"
+    ports:
+      - 8080:8080
+```

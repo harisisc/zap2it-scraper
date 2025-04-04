@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	URLListingProvidersEndpoint = "https://tvlistings.zap2it.com/gapzap_webapi/api/Providers/getPostalCodeProviders"
+	URLListingProvidersEndpoint = "https://tvlistings.gracenote.com/gapzap_webapi/api/Providers/getPostalCodeProviders"
 )
 
 type ListingProvidersResponse struct {

@@ -11,7 +11,7 @@ import (
 func CreateTVGuide(language string) *TVGuide {
 	return &TVGuide{
 		Language:          language,
-		SourceInfoURL:     "http://tvlistings.zap2it.com/",
+		SourceInfoURL:     "https://tvlistings.gracenote.com/",
 		SourceInfoName:    "zap2it",
 		GeneratorInfoName: "zap2it-scraper",
 		GeneratorInfoURL:  "https://github.com/carldanley/zap2it-scraper",

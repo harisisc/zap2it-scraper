@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	URLGuideEndpoint = "https://tvlistings.zap2it.com/api/grid"
+	URLGuideEndpoint = "https://tvlistings.gracenote.com/api/grid"
 	URLIconPrefix    = "http://zap2it.tmsimg.com/assets"
 )
 
@@ -68,7 +68,7 @@ func (e *EventResponse) GetIconURL() string {
 }
 
 func (e *EventResponse) GetURL() string {
-	return fmt.Sprintf("https://tvlistings.zap2it.com/overview.html?programSeriesId=%s&tmsId=%s", e.SeriesID, e.Program.ID)
+	return fmt.Sprintf("https://tvlistings.gracenote.com/overview.html?programSeriesId=%s&tmsId=%s", e.SeriesID, e.Program.ID)
 }
 
 func GetGuideResponse(request GuideRequest) (GuideResponse, error) {
